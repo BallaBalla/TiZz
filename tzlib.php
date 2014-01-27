@@ -65,11 +65,13 @@ function debug($REPORTLEVEL, $MESSAGE) {
 //		Random Texty ID rndTextyID
 //##############################################################################
 function rndTextyID(){
+	debug(2, "rndTextyID: Start function.");
 	$sql="SELECT textyid FROM texty";
 	$query=mysql_query($sql); $i=0;
 	while($data=mysql_fetch_rows($query)){
 		$TempIDs[$i]=$data[0]; $i++;
 	} $i--;
+	debug(2, "rndTextyID: Found $i Textys.");
 	$ID="";
 	while($ID==""){
 		$ID="".$TempIDs[rand(0,$i)];
@@ -77,6 +79,12 @@ function rndTextyID(){
 			$ID="";
 		}
 	}
+	if($ID!=""){
+		debug(2, "rndTextyID: Return TextyID [$ID].");
+	}else{
+		debug(1, "rndTextyID: TextyID is empty!!!");
+	}
+	debug(2, "rndTextyID: End of function.");
 	return($ID);
 }
 
@@ -84,14 +92,21 @@ function rndTextyID(){
 //		Random Words rndWords
 //##############################################################################
 function rndWords($TEXTYID){
+	if(!isset($TEXTYID)){
+		debug(1, "rndWords: Function need a TextyID.");
+		die("Ein interner Fehler ist aufgetreten.<br>\n");
+	}
+	debug(2, "rndWords: Start function.");
 	$sql="SELECT Texty FROM texty WHERE textyid=$TEXTYID";
 	$data=mysql_fetch_row(mysql_query($sql));
+	debug(2, "rndWords: Fetch Texty [$TEXTYID]: SQL Query:[$sql]");
 	$Texty=$data[0];
 	$textarr=explode(" ", $Texty);
 	$i=0;
 	while($textarr[$i]){
 		$i++;
 	}$i--;
+	debug(2, "rndWords: Found $i Words in Texty.");
 	$wordsarr= array(
 		'textyid' => $TEXTYID,
 		'word1' => $textarr[rand(0,$i)],
@@ -105,6 +120,7 @@ function rndWords($TEXTYID){
 		'word9' => $textarr[rand(0,$i)],
 		'word10' => $textarr[rand(0,$i)]
 	);
+	debug(2, "rndWords: End of function.");
 	return($wordsarr);
 }
 
