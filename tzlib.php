@@ -66,24 +66,32 @@ function debug($REPORTLEVEL, $MESSAGE) {
 //##############################################################################
 function rndTextyID(){
 	debug(2, "rndTextyID: Start function.");
-	$sql="SELECT textyid FROM texty";
+
+	//Select textys
+	$sql="SELECT textyid FROM texty WHERE activ=1";
 	$query=mysql_query($sql); $i=0;
 	while($data=mysql_fetch_rows($query)){
-		$TempIDs[$i]=$data[0]; $i++;
+		$TempIDs[$i]=$data[0]; $i++;	//schreibt textyid in array
 	} $i--;
+
+	//select textyid
 	debug(2, "rndTextyID: Found $i Textys.");
 	$ID="";
 	while($ID==""){
-		$ID="".$TempIDs[rand(0,$i)];
-		if(!$ID){
+		$ID="".$TempIDs[rand(0,$i)];//default textyid aus array
+		if(!$ID){	//check auf fehler
 			$ID="";
 		}
 	}
+
+	//check auf fehler ..... again -.-
 	if($ID!=""){
 		debug(2, "rndTextyID: Return TextyID [$ID].");
 	}else{
 		debug(1, "rndTextyID: TextyID is empty!!!");
 	}
+
+	//finito
 	debug(2, "rndTextyID: End of function.");
 	return($ID);
 }
@@ -92,20 +100,31 @@ function rndTextyID(){
 //		Random Words rndWords
 //##############################################################################
 function rndWords($TEXTYID){
+	//check textyid is set
 	if(!isset($TEXTYID)){
 		debug(1, "rndWords: Function need a TextyID.");
 		die("Ein interner Fehler ist aufgetreten.<br>\n");
 	}
+
+	//Get Text from texty
 	debug(2, "rndWords: Start function.");
-	$sql="SELECT Texty FROM texty WHERE textyid=$TEXTYID";
+	$sql="SELECT Texty FROM texty WHERE textyid=$TEXTYID AND activ=1";
 	$data=mysql_fetch_row(mysql_query($sql));
+
+	//Teile texty nach leerzeichen
 	debug(2, "rndWords: Fetch Texty [$TEXTYID]: SQL Query:[$sql]");
 	$Texty=$data[0];
+	$Texty=str_replace("\n"," ", $Texty);
+	$Texty=str_replace("\t"," ", $Texty);
 	$textarr=explode(" ", $Texty);
+
+	//count words
 	$i=0;
 	while($textarr[$i]){
 		$i++;
 	}$i--;
+
+	//per random 10 wörter in array schreiben (plus id)
 	debug(2, "rndWords: Found $i Words in Texty.");
 	$wordsarr= array(
 		'textyid' => $TEXTYID,
@@ -120,11 +139,99 @@ function rndWords($TEXTYID){
 		'word9' => $textarr[rand(0,$i)],
 		'word10' => $textarr[rand(0,$i)]
 	);
+
 	debug(2, "rndWords: End of function.");
 	return($wordsarr);
 }
+//##############################################################################
+//		Get Texty
+//##############################################################################
+function getTexty($TEXTYID){
+	if(!isset($TEXTYID)){
+		debug(1, "getTexty: Function need a TextyID.");
+		die("Ein interner Fehler ist aufgetreten.<br>\n");
+	}
 
+	debug(2, "getTexty: Start function.");
+	$sql="SELECT Texty,title, votepoints, userfs, klicks FROM texty WHERE textyid=$TEXTYID AND activ=1";
+	$data=mysql_fetch_row(mysql_query($sql));
+	debug(2, "getTexty: Fetch Texty [$TEXTYID]: SQL Query:[$sql]");
 
+	$Texty=array(
+		'TextyID' => $TEXTYID,
+		'Title' => $data[1],
+		'Texty' => $data[0],
+		'votepoints' => $data[2],
+		'userfs' => $data[3],
+		'klicks' => $data[4]
+	);
+
+	debug(2, "getTexty: End of function.");
+	return($Texty);
+}
+//##############################################################################
+//		List Texty
+//##############################################################################
+function lsTexty($ORDER, $COUNT){
+
+	if(!isset($ORDER) || !isset($COUNT)){
+		debug(2, "lsTexty: Function need a Order and Count Argument.");
+		if(!isset($ORDER) || $ORDER==""){
+			debug(2, "lsTexty: Order is not set. Use default Value: Order: [new].");
+			$ORDER="new";
+		}
+		if(!isset($COUNT) || $COUNT==""){
+			debug(2, "lsTexty: Count is not set. Use default Value: Count: [10].");
+			$COUNT=10;
+		}
+		
+	}
+	debug(2, "lsTexty: Start function.");
+
+	if($ORDER != "new" && $ORDER != "old" && $ORDER != "mklicks" && $ORDER != "lklicks" && $ORDER != "bvote" && $ORDER != "wvote"){
+		debug(1, "lsTexty: Order is incorrect. Use new.");
+		$ORDER="new";
+	}
+	if($ORDER=="new"){
+		$by="TextyID";
+		$ord="DESC";
+	}
+	if($ORDER=="old"){
+		$by="TextyID";
+		$ord="ASC";
+	}
+	if($ORDER=="mklicks"){
+		$by="klicks";
+		$ord="DESC";
+	}
+	if($ORDER=="lklicks"){
+		$by="klicks";
+		$ord="ASC";
+	}
+	if($ORDER=="bvote"){
+		$by="votepoints";
+		$ord="DESC";
+	}
+	if($ORDER=="wvote"){
+		$by="votepoints";
+		$ord="ASC";
+	}
+
+	$sql="SELECT textyid FROM texty WHERE activ=1 ORDER BY $by $ord";
+	debug(2, "lsTexty: Start fetching TextyIDs (Order By [$by][$ord] /Arg:[$ORDER]/Count:[$COUNT])");
+	debug(2, "lsTexty: SQL Query:[$sql]");
+	$query=mysql_query($sql);
+
+	$i=0;
+	while($data=mysql_fetch_row($query) && $i < $COUNT){
+		$TextyList[$i]=$data[0];
+		debug(2, "lsTexty: Wrote TextyID [".$data[0]."] in TextyList [$i].");
+		$i++;
+	}
+
+	debug(2, "lsTexty: End of function.");
+	return($TextyList);
+}
 
 
 
