@@ -1,0 +1,110 @@
+
+
+Funktions Hilfe:
+//////////////////////////////////////////////////////////////////////////////////////////////////
+debug($REPORTLEVEL, $MESSAGE):
+		Beschreib:
+			Giebt Outputs.
+		Args:
+			$REPORTLEVEL:	Bei welchem Debuglevel die Nachricht ausgegeben werden soll.
+					1= Err
+					2= Debug
+			$MESSAGE: 	Nachricht die Ausgegeben werden soll.
+		Return:
+			None
+//////////////////////////////////////////////////////////////////////////////////////////////////
+rndTextyID():
+		Beschreib:
+			Giebt eine zufällige TextyID 
+		Args:
+			None
+		Return:
+			A random TextyIDs (Int)
+//////////////////////////////////////////////////////////////////////////////////////////////////
+rndWords($TEXTYID):
+		Beschreib:
+			Giebt die TextyID und 10 zufällige Wörter in einem Array aus.
+		Args:
+			$TEXTYID: TextyID from this 10 random words will selected
+		Return:
+			Array:
+				textyid:	TextyIDs
+				word1:		Random Word 1
+				word2:		Random Word 2
+				word3:		Random Word 3
+				word4:		Random Word 4
+				word5:		Random Word 5
+				word6:		Random Word 6
+				word7:		Random Word 7 
+				word8:		Random Word 8
+				word9:		Random Word 9
+				word10:		Random Word 10
+//////////////////////////////////////////////////////////////////////////////////////////////////
+getTexty($TEXTYID):
+		Beschreib:
+			Giebt Daten eines Texty zurück
+		Args:
+			$TEXTYID: TextyID from this the Data will fetched
+		Return:
+			Array:
+				TextyID:	ID des Texty	
+				Title:		Titel des Textys
+				Texty:		Text des textys
+				votepoints:	Punkte im Voting
+				userfs:		Ersteller ID des textys
+				klicks:		Klicks auf das Texty
+//////////////////////////////////////////////////////////////////////////////////////////////////
+lsTexty($ORDER, $COUNT):
+		Beschreib:
+			Listet und sortiert textyID in ein array ein
+		Args:
+			$ORDER: Wie sollen die Textys soriert werden? Möglichkeiten:
+				new:		Neustes Texty zuerst
+				old:		ältestes texty zuerst
+				mklicks:	Texty mit meisten klicks zuerst
+				lklicks:	Texty mit den wenigsten klicks zuerst
+				bvote:		Texty mit bester Bewertung zuerst
+				wvote:		Texty mit schlechtester Bewertung zuerst
+			$COUNT:	Wie viele textys sollten in array geschrieben werden?
+
+			
+		Return:
+			Array:
+				1 bis $COUNT:	TextyID
+//////////////////////////////////////////////////////////////////////////////////////////////////
+voteTexty($TEXTYID, $UpOrDown):
+		BeschreiB:
+			Giebt einem Texty einen Votepunkt oder zieht einen ab.
+		Args:
+			$TEXTYID: ID des texty das auf oder ab gevotet werden soll.
+			$UpOrDown: Giebt an ob auf oder ab gevotet werden soll. Möglichkeiten:
+				   1: votet auf 
+				  -1: votet ab 
+				  up: votet auf 
+				down: votet ab
+		Return:
+			None
+//////////////////////////////////////////////////////////////////////////////////////////////////
+addKlick($TEXTYID):
+		Beschreib:
+			Fügt einen Klick einem texty hinzu.
+		Args:
+			$TEXTYID: ID des texty dem ein klick hinzugefügt werden soll.
+		Return:
+			None
+//////////////////////////////////////////////////////////////////////////////////////////////////
+getKlick($TEXTYID):
+		Beschreib:
+			Giebt anzahl klicks eines Textys zurück.
+		Args:
+			$TEXTYID: ID des texty von dem die anzahl klicks ausgelesen werden sollen.
+		Return:
+			Azahl klicks (int)
+//////////////////////////////////////////////////////////////////////////////////////////////////
+getVote($TEXTYID):
+		Beschreib:
+			Giebt Vote Punkte eines Textys zurück.
+		Args:
+			$TEXTYID: ID des texty von dem die Vote Punkte ausgelesen werden sollen.
+		Return:
+			Vote Punkte (int)

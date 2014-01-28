@@ -232,8 +232,115 @@ function lsTexty($ORDER, $COUNT){
 	debug(2, "lsTexty: End of function.");
 	return($TextyList);
 }
+//##############################################################################
+//		Vote Texty
+//##############################################################################
+function voteTexty($TEXTYID, $UpOrDown){
+	if(!isset($TEXTYID)){
+		debug(1, "voteTexty: Need Argument TextyID.");
+		debug(1, "voteTexty: Stop Function because arg error.");
+		return();
+	}
+	debug(2, "voteTexty: Start Function with Arg:[$UpOrDown].");
+	if(!isset($UpOrDown) || $UpOrDown==""){
+		debug(1, "voteTexty: Need Argument Up or Down.");
+		debug(1, "voteTexty: Stop Function because arg error.");
+		return();
+	}
 
+	if($UpOrDown=="up"){
+		$UpOrDown=1;
+		debug(2, "voteTexty: Translate [up] to [1].");
+	}
+	if($UpOrDown=="down"){
+		$UpOrDown="-1";
+		debug(2, "voteTexty: Translate [down] to [-1].");
+	}
 
+	if($UpOrDown==1 || $UpOrDown=="-1"){
+		debug(2, "voteTexty: Change Texty with ID:[$TEXTYID].");
+		$sql="SELECT votepoints FROM texty WHERE textyid=$TEXTYID AND activ=1";
+		$data=mysql_fetch_row(mysql_query($sql));
+		debug(2, "voteTexty: Old Points [".$data[0]."].");
 
+		$new=$data[0]+($UpOrDown);
+		debug(2, "voteTexty: Change Points to [".$new."].");
+		$sql="UPDATE texty SET votepoints='$new' WHERE textyid=$TEXTYID AND activ=1";
+		mysql_query($sql);
 
+		$sql="SELECT votepoints FROM texty WHERE textyid=$TEXTYID AND activ=1";
+		$data=mysql_fetch_row(mysql_query($sql));
+		debug(2, "voteTexty: New Points [".$data[0]."].");
+
+		if($data[0] != $new){
+			debug(1, "voteTexty: New Points in DB [".$data[0]."] are not the new Points [$new] we want.");
+		}
+	}else{
+		debug(2, "voteTexty: Argument incorrect.");
+	}
+}
+//##############################################################################
+//		addKlick
+//##############################################################################
+function addKlick($TEXTYID){
+	if(!isset($TEXTYID)){
+		debug(1, "addKlick: Need Argument TextyID.");
+		debug(1, "addKlick: Stop Function because arg error.");
+		return();
+	}
+	debug(2, "addKlick: Start Function with Arg:[$TEXTYID].");
+
+	$sql="SELECT klicks FROM texty WHERE textyid=$TEXTYID AND activ=1";
+	$data=mysql_fetch_row(mysql_query($sql));
+	debug(2, "addKlick: Old Klicks: [".$data[0]."].");
+
+	$new=$data[0]+1;
+	debug(2, "addKlick: Change Klicks to [".$new."].");
+	$sql="UPDATE texty SET klicks='$new' WHERE textyid=$TEXTYID AND activ=1";
+	mysql_query($sql);
+
+	$sql="SELECT klicks FROM texty WHERE textyid=$TEXTYID AND activ=1";
+	$data=mysql_fetch_row(mysql_query($sql));
+	debug(2, "addKlick: New Klicks [".$data[0]."].");
+
+	if($data[0] != $new){
+		debug(1, "addKlick: New Klicks in DB [".$data[0]."] are not the new Klicks [$new] we want.");
+	}
+}
+//##############################################################################
+//		getKlick
+//##############################################################################
+function getKlick($TEXTYID){
+	if(!isset($TEXTYID)){
+		debug(1, "getKlick: Need Argument TextyID.");
+		debug(1, "getKlick: Stop Function because arg error.");
+		return();
+	}
+	debug(2, "getKlick: Start Function with Arg:[$TEXTYID].");
+
+	$sql="SELECT klicks FROM texty WHERE textyid=$TEXTYID AND activ=1";
+	$data=mysql_fetch_row(mysql_query($sql));
+	debug(2, "getKlick: Klicks: [".$data[0]."].");
+
+	return($data[0]);
+	debug(2, "getKlick: Function end.");
+}
+//##############################################################################
+//		getVote
+//##############################################################################
+function getVote($TEXTYID){
+	if(!isset($TEXTYID)){
+		debug(1, "getVote: Need Argument TextyID.");
+		debug(1, "getVote: Stop Function because arg error.");
+		return();
+	}
+	debug(2, "getVote: Start Function with Arg:[$TEXTYID].");
+
+	$sql="SELECT votepoints FROM texty WHERE textyid=$TEXTYID AND activ=1";
+	$data=mysql_fetch_row(mysql_query($sql));
+	debug(2, "getVotek: Votepoints: [".$data[0]."].");
+
+	return($data[0]);
+	debug(2, "getVote: Function end.");
+}
 ?>
