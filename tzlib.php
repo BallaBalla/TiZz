@@ -239,13 +239,13 @@ function voteTexty($TEXTYID, $UpOrDown){
 	if(!isset($TEXTYID)){
 		debug(1, "voteTexty: Need Argument TextyID.");
 		debug(1, "voteTexty: Stop Function because arg error.");
-		return();
+		return(0);
 	}
 	debug(2, "voteTexty: Start Function with Arg:[$UpOrDown].");
 	if(!isset($UpOrDown) || $UpOrDown==""){
 		debug(1, "voteTexty: Need Argument Up or Down.");
 		debug(1, "voteTexty: Stop Function because arg error.");
-		return();
+		return(0);
 	}
 
 	if($UpOrDown=="up"){
@@ -286,7 +286,7 @@ function addKlick($TEXTYID){
 	if(!isset($TEXTYID)){
 		debug(1, "addKlick: Need Argument TextyID.");
 		debug(1, "addKlick: Stop Function because arg error.");
-		return();
+		return(0);
 	}
 	debug(2, "addKlick: Start Function with Arg:[$TEXTYID].");
 
@@ -314,7 +314,7 @@ function getKlick($TEXTYID){
 	if(!isset($TEXTYID)){
 		debug(1, "getKlick: Need Argument TextyID.");
 		debug(1, "getKlick: Stop Function because arg error.");
-		return();
+		return(0);
 	}
 	debug(2, "getKlick: Start Function with Arg:[$TEXTYID].");
 
@@ -332,7 +332,7 @@ function getVote($TEXTYID){
 	if(!isset($TEXTYID)){
 		debug(1, "getVote: Need Argument TextyID.");
 		debug(1, "getVote: Stop Function because arg error.");
-		return();
+		return(0);
 	}
 	debug(2, "getVote: Start Function with Arg:[$TEXTYID].");
 
@@ -342,5 +342,105 @@ function getVote($TEXTYID){
 
 	return($data[0]);
 	debug(2, "getVote: Function end.");
+}
+//##############################################################################
+//		addTexty
+//##############################################################################
+function addTexty($TITLE, $TEXT, $USERID){
+	if(!isset($TITLE) || !isset($TEXT) || !isset($USERID)){
+		debug(1, "addTexty: Need Arguments: TITLE, TEXT, USERID.");
+		debug(1, "addTexty: Stop Function because arg error.");
+		return(0);
+	}
+	debug(2, "addTexty: Start Function. Title:[$TITLE] USERID:[$USERID].");
+
+	$sql="INSERT INTO texty (Texty,title,userfs) VALUES ('$TEXT','$TITLE',$USERID) ";
+	mysql_query($sql);
+	debug(2, "addTexty: Insert is make. Now check Insert......");
+
+	$sql="SELECT textyid FROM texty WHERE Texty='$TEXT' AND title='$TITLE' AND userfs=$USERID AND activ=1 ORDER BY textyid DESC";
+	$query=mysql_query($sql);
+	if(mysql_num_rows($query) <= 0){
+		debug(1, "addTexty: Texty not found in DB. Insert has Fail.");
+		debug(1, "addTexty: Stop Function because Insert-Fail.");
+		return(0);	
+	}
+	$data=mysql_fetch_row($sql);
+	debug(2, "addTexty: Insert is found in DB. State: OK. TextyID:[".$data[0]."]");
+
+	//ABOS FEHLEN NOCH
+	sendAbo($USERID,$data[0]);
+	$textyidid=$data[0];
+
+	//Return TextyID
+	return($textyidid);
+	debug(2, "addTexty: Function end.");
+}
+//##############################################################################
+//		addAbo
+//##############################################################################
+function addAbo($MAIL, $USERID){
+	if(!isset($MAIL) || !isset($USERID)){
+		debug(1, "addAbo: Need Arguments: MAIL, USERID.");
+		debug(1, "addAbo: Stop Function because arg error.");
+		return(0);
+	}
+	debug(2, "addAbo: Start Function. E-Mail:[$MAIL] USERID:[$USERID].");
+
+	$actkey=sha1(rand(1,100).time().rand(100,10000)."BANANA");
+	$sql="INSERT INTO abonnement (mail,userfs,activationkey) VALUES ('$MAIL',$USERID,'$actkey') ";
+	mysql_query($sql);
+	debug(2, "addAbo: Insert is make. Now check Insert......");
+
+	$sql="SELECT aboID FROM abonnement WHERE mail='$MAIL' AND activationkey='$actkey' AND userfs=$USERID AND activ=1";
+	$query=mysql_query($sql);
+	if(mysql_num_rows($query) <= 0){
+		debug(1, "addAbo: Abo not found in DB. Insert has Fail.");
+		debug(1, "addAbo: Stop Function because Insert-Fail.");
+		return(0);	
+	}
+	$data=mysql_fetch_row($sql);
+	debug(2, "addAbo: Insert is found in DB. State: OK. AboID:[".$data[0]."]");
+
+	debug(2, "addAbo: Send Mail to $MAIL.");
+	$betreff = "Pete Abonnoment bestaetigen";
+	$from = "From: Brain Shit <noreply@platz.halter>";
+	$text = "Bestaetigen Sie Ihr Abonnoment mit diesem Link: [http://ka.bue.ch/acti.php?key=$actkey]. Oder ignorieren Sie dieses Mail.";
+
+	mail($MAIL, $betreff, $text, $from);
+
+	//Return AboID
+	return($data[0]);
+	debug(2, "addAbo: Function end.");
+}
+//##############################################################################
+//		sendAbo
+//##############################################################################
+function sendAbo($USERID,$TEXTYID){
+	if(!isset($USERID) || !isset($TEXTYID)){
+		debug(1, "sendAbo: Need Arguments: TextyID, USERID.");
+		debug(1, "sendAbo: Stop Function because arg error.");
+		return(0);
+	}
+	debug(2, "sendAbo: Start Function. TextyID[$TEXTYID] USERID:[$USERID].");
+
+	$sql="SELECT title,Texty FROM texty WHERE textyid=$TEXTYID AND activ=1";
+	$data=mysql_fetch_row(mysql_query($sql));
+	$title=$data[0];
+	$text=$data[0];
+
+	$sql="SELECT mail FROM abonnement WHERE userfs=$USERID AND activ=1) ";
+	$query=mysql_query($sql);
+	$i=0;
+	while($data=mysql_fetch_row($query)){
+		$betreff = "Pete.domain.ch: $title";
+		$from = "From: Brain Shit <noreply@platz.halter>";
+		$text = "New Post: $title:\n$text";
+
+		mail($data[0], $betreff, $text, $from);
+		$i++;
+	}
+	debug(2, "sendAbo: Send (hopfully) $i Mails.");
+	debug(2, "sendAbo: Function End.");
 }
 ?>

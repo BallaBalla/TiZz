@@ -1,0 +1,13 @@
+DB:
+	abo:
+		default bei activ auf 0.
+
+lib:
+	addAbo:
+		mailabsender variable -> cfg.php
+		duplikationen ausschliessen.
+		mail bearbeiten.
+	sendAbo:
+		mailabsender variable -> cfg.php
+		mail bearbeiten.
+

@@ -108,3 +108,31 @@ getVote($TEXTYID):
 			$TEXTYID: ID des texty von dem die Vote Punkte ausgelesen werden sollen.
 		Return:
 			Vote Punkte (int)
+//////////////////////////////////////////////////////////////////////////////////////////////////
+addAbo($MAIL, $USERID):
+		Beschreib:
+			Erstellt ein Abonnoment.
+		Args:
+			$USERID: ID des Users der abonniert werden soll.
+			$MAIL: 	 E-Mail auf die das Abonnoment laufen soll.
+		Return:
+			AboID (int)
+//////////////////////////////////////////////////////////////////////////////////////////////////
+sendAbo($USERID,$TEXTYID):
+		Beschreib:
+			Versendet E-Mails an abonente.
+		Args:
+			$USERID: UserID des Users dessen abonnenten gesucht werden sollen.
+			$TEXTYID: ID des texty das hinzugefügt wurde.
+		Return:
+			none
+//////////////////////////////////////////////////////////////////////////////////////////////////
+addTexty($TITLE, $TEXT, $USERID):
+		Beschreib:
+			Erstellt ein texty, versendet via sendAbo() Abo-Mails
+		Args:
+			$TITLE: Titel des texty
+			$TEXT: Das Texty (der text)
+			$USERID: ID des erstellers des texty
+		Return:
+			TextyID (int)
