@@ -1,22 +1,5 @@
 <?php
 // Tizz Lib
-// cfg load and mysql connection are temporary
-
-
-//##############################################################################
-//		Load Settings
-//##############################################################################
-	include('./cfg.php');
-
-//##############################################################################
-//		Temporary MySQL Connection
-//##############################################################################
-	//Zum server verbinden:
-	$MC1 = mysql_pconnect("$MCONNECT_HOST","$MCONNECT_USER","$MCONNECT_PW")
-		or die ("Interner MySQL Server Verbindungs Fehler.");
-	// use DB:
-	$MC2 = mysql_select_db($MCONNECT_DB)
-		or die ("Interner MySQL Server Verbindungs Fehler.");
 
 //##############################################################################
 //		DEBUG debug()
@@ -365,7 +348,7 @@ function addTexty($TITLE, $TEXT, $USERID){
 		debug(1, "addTexty: Stop Function because Insert-Fail.");
 		return(0);	
 	}
-	$data=mysql_fetch_row($sql);
+	$data=mysql_fetch_row($query);
 	debug(2, "addTexty: Insert is found in DB. State: OK. TextyID:[".$data[0]."]");
 
 	//ABOS FEHLEN NOCH
@@ -373,8 +356,9 @@ function addTexty($TITLE, $TEXT, $USERID){
 	$textyidid=$data[0];
 
 	//Return TextyID
-	return($textyidid);
 	debug(2, "addTexty: Function end.");
+	return($textyidid);
+
 }
 //##############################################################################
 //		addAbo
@@ -429,7 +413,7 @@ function sendAbo($USERID,$TEXTYID){
 	$title=$data[0];
 	$text=$data[0];
 
-	$sql="SELECT mail FROM abonnement WHERE userfs=$USERID AND activ=1) ";
+	$sql="SELECT mail FROM abonnement WHERE userfs=$USERID AND activ=1";
 	$query=mysql_query($sql);
 	$i=0;
 	while($data=mysql_fetch_row($query)){
