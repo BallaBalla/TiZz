@@ -427,4 +427,26 @@ function sendAbo($USERID,$TEXTYID){
 	debug(2, "sendAbo: Send (hopfully) $i Mails.");
 	debug(2, "sendAbo: Function End.");
 }
+//##############################################################################
+//		trimTexty
+//##############################################################################
+function trimTexty($TEXT, $ROWS){
+	if(!isset($TEXT) || !isset($ROWS)){
+		debug(1, "trimTexty: Need Arguments: Text and RowCount.");
+		debug(1, "trimTexty: Stop Function because arg error.");
+		return(0);
+	}
+	debug(2, "trimTexty: Start Function.");
+
+	$rows=explode("\n", $TEXT);
+	$i=0;
+	while($i < $ROWS && $rows[$i]){
+		$newTexty.=$rows[$i];
+		$i++;
+	}
+
+	debug(2, "trimTexty: Function End. Rows: [$i].");
+	return($newTexty);
+	
+}
 ?>

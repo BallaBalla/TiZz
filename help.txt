@@ -136,3 +136,12 @@ addTexty($TITLE, $TEXT, $USERID):
 			$USERID: ID des erstellers des texty
 		Return:
 			TextyID (int)
+//////////////////////////////////////////////////////////////////////////////////////////////////
+trimTexty($TEXT, $ROWS):
+		Beschreib:
+			Kürtzt Text auf bestimmte Anzahl reihen.
+		Args:
+			$ROWS: Azahl Zeilen
+			$TEXT: Der zu kürtztende Text
+		Return:
+			Gekürtzter Text (Text)
