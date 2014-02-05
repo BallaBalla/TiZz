@@ -46,7 +46,7 @@
 					$Texty_array=getTexty($TextyArray[$i]);
 					
 					echo"<textarea style='border:none;width:100%;overflow:hidden;resize: none;background-color: ".chcolor().";' 
-						cols=100% rows=10 readonly> -[ ".$Texty_array['Title']." ]-\n\n".trimTexty($Texty_array['Texty'], 10)."</textarea>";
+						cols=100% rows=10 readonly onclick=\"location.href='./test_texty.php?id=".$Texty_array['TextyID']."'\"> -[ ".$Texty_array['Title']." ]-\n\n".trimTexty($Texty_array['Texty'], 10)."</textarea>";
 					$i++;
 				}
 			?>
@@ -58,14 +58,15 @@
 				$i=0;
 				while($i<28){
 					$Wordtext="";
-					$Words=rndWords(rndTextyID());
+					$txtyid=rndTextyID();
+					$Words=rndWords($txtyid);
 					$o=1;
 					while($Words["word".$o] && $o<=10){
 						$Wordtext.=$Words["word".$o]." ";
 						$o++;
 					}
 					echo"<textarea style='border:none;width:100%;overflow:hidden;resize: none;background-color: ".chcolor().";' 
-						cols=100% rows=2 readonly>".$Wordtext."</textarea>";
+						cols=100% rows=2 readonly onclick=\"location.href='./test_texty.php?id=".$txtyid."'\">".$Wordtext."</textarea>";
 					$i++;
 				}
 
