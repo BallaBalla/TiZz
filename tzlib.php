@@ -53,9 +53,10 @@ function rndTextyID(){
 	//Select textys
 	$sql="SELECT textyid FROM texty WHERE activ=1";
 	$query=mysql_query($sql); $i=0;
-	while($data=mysql_fetch_rows($query)){
+	while($data=mysql_fetch_row($query)){
 		$TempIDs[$i]=$data[0]; $i++;	//schreibt textyid in array
-	} $i--;
+		debug(2, "rndTextyID: write TextyID [".$data[0]."] in TempIDs Array[$i]");
+	} 
 
 	//select textyid
 	debug(2, "rndTextyID: Found $i Textys.");
@@ -105,8 +106,11 @@ function rndWords($TEXTYID){
 	$i=0;
 	while($textarr[$i]){
 		$i++;
-	}$i--;
-
+	}
+	$p=0;
+	while($p<=rand(10,$i)){
+		rand(0,$i);$p++;
+	}
 	//per random 10 wörter in array schreiben (plus id)
 	debug(2, "rndWords: Found $i Words in Texty.");
 	$wordsarr= array(
@@ -122,7 +126,11 @@ function rndWords($TEXTYID){
 		'word9' => $textarr[rand(0,$i)],
 		'word10' => $textarr[rand(0,$i)]
 	);
-
+	$o=1;
+	while($wordsarr["word$o"] && $o<=10){
+		debug(2,"rndWords: Write [".$wordsarr['word'.$o]."] in textarr Word[$o].");
+		$o++;
+	}
 	debug(2, "rndWords: End of function.");
 	return($wordsarr);
 }
@@ -200,13 +208,14 @@ function lsTexty($ORDER, $COUNT){
 		$ord="ASC";
 	}
 
-	$sql="SELECT textyid FROM texty WHERE activ=1 ORDER BY $by $ord";
+	$sql="SELECT textyid FROM texty WHERE activ=1 ORDER BY $by $ord LIMIT $COUNT";
 	debug(2, "lsTexty: Start fetching TextyIDs (Order By [$by][$ord] /Arg:[$ORDER]/Count:[$COUNT])");
 	debug(2, "lsTexty: SQL Query:[$sql]");
 	$query=mysql_query($sql);
 
 	$i=0;
-	while($data=mysql_fetch_row($query) && $i < $COUNT){
+	$TextyList=array();
+	while($data=mysql_fetch_row($query)){
 		$TextyList[$i]=$data[0];
 		debug(2, "lsTexty: Wrote TextyID [".$data[0]."] in TextyList [$i].");
 		$i++;
@@ -448,5 +457,18 @@ function trimTexty($TEXT, $ROWS){
 	debug(2, "trimTexty: Function End. Rows: [$i].");
 	return($newTexty);
 	
+}
+//##############################################################################
+//		chcolor (TMP)
+//##############################################################################
+function chcolor(){
+	global $bgcolor;
+	if($bgcolor=="#FAFAFA"){
+		$bgcolor="#E6F8E0";
+		return($bgcolor);
+	}else{
+		$bgcolor="#FAFAFA";
+		return($bgcolor);
+	}
 }
 ?>
